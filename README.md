@@ -4,6 +4,12 @@
 
 # Sparkso ICO contract
 
+## To Do 
+
+- [ ] Free mint for mona console holder 
+- [ ] VRF function to choose randomly airdrop object
+- [ ] Test 
+
 ## Overview
 
 TO DO
@@ -82,4 +88,4 @@ $ npx hardhat  verify --network mainnet $CONTRACT_ADDRESS $CONSTRUCTOR_ARGUMENTS
 
 ## 📄 License
 
-**Sparkso ICO contracts** is released under the [Apache-2.0](LICENSE).
+**My Mona Lana** contract is released under the [Apache-2.0](LICENSE).
