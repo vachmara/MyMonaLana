@@ -2,11 +2,18 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-# Sparkso ICO contract
+# My Mona Lana contract
 
 ## To Do 
 
+- [ ] Define cost of each NFTs at each stages (pre-sale, public sale)
+- [ ] Define repartition of the tokenemics (wallets redistribution, payment splitter)
+- [ ] Define if VRF function need to take in account the number of token hold by each holder (If I own 5 Monas, do I have more chance to be airdrop an random trait than a 1 Mona holder ?) 
+- [ ] Store informations efficiently about 2-3 layers potentially for each holder 
+- [ ] Access efficiently to these stored datas
+- [ ] Smart contract have right to mint ? (multi sig wallet cannot be able to mint but it protect against Max mint smart contract attack)
 - [ ] Free mint for mona console holder 
+- [ ] Whitelist people
 - [ ] VRF function to choose randomly airdrop object
 - [ ] Test 
 
