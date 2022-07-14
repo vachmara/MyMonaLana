@@ -3,12 +3,12 @@
 pragma solidity ^0.8.11;
 
 import "erc721a/contracts/ERC721A.sol";
-import "@manifoldxyz/creator-core-solidity/contracts/ERC1155Creator.sol";
+import "@manifoldxyz/creator-core-solidity/contracts/ERC1155CreatorImplementation.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract MyMonaLana is ERC721A {
     // Address to the mona console contract
-    ERC1155Creator private immutable _monaConsole;
+    ERC1155CreatorImplementation private immutable _monaConsole;
 
     // Merkle root used to store whitelist addresses
     bytes32 private _merkleRoot;
@@ -52,9 +52,23 @@ contract MyMonaLana is ERC721A {
         _;
     }
 
-    constructor(bytes32 merkleRoot_, address monaConsole_) ERC721A("My*MonaLana", "MYMONA") {
+    /**
+     * @dev Reverts if the address is wrong
+     */
+    modifier nonNullAddress() {
+        require(
+            msg.sender != address(0x00),
+            "MyMonaLana - Cannot mint with this address"
+        );
+
+        _;
+    }
+
+    constructor(bytes32 merkleRoot_, address monaConsole_)
+        ERC721A("My*MonaLana", "MYMONA")
+    {
         _merkleRoot = merkleRoot_;
-        _monaConsole = monaConsole_;
+        _monaConsole = ERC1155CreatorImplementation(monaConsole_);
     }
 
     /**
@@ -72,18 +86,40 @@ contract MyMonaLana is ERC721A {
     }
 
     /**
-     * @param consoleIDs is an arry of mona console IDs own by the sender
+     * @param amount of the console own by the sender
      */
-    function monaConsoleMint(uint32[] memory consoleIDs)
+    function monaConsoleMint(uint256 amount)
         external
         payable
         onlyValidTime
-    {}
+        nonNullAddress
+    {
+        require(
+            amount > 0,
+            "MyMonaLana - Amounts need to be superior to zero."
+        );
+        require(
+            _monaConsole.balanceOf(msg.sender, 1) >= amount,
+            "MyMonaLana - You have not a sufficient amounts of Mona Console."
+        );
+        uint256[] memory id = new uint256[](1);
+        uint256[] memory amounts = new uint256[](1);
+        id[0] = 1;
+        amounts[0] = amount;
+
+        _monaConsole.burn(msg.sender, id, amounts);
+        _safeMint(msg.sender, amount, "");
+    }
 
     /**
      * @param quantity mint requested
      */
-    function publicMint(uint256 quantity) external payable limitMint(quantity) {
+    function publicMint(uint256 quantity)
+        external
+        payable
+        limitMint(quantity)
+        nonNullAddress
+    {
         require(
             block.timestamp >= _openingTime + _shiftPublicSale,
             "MyMonaLana - Cannot purchase before the public opening time."
@@ -104,6 +140,7 @@ contract MyMonaLana is ERC721A {
         external
         payable
         onlyValidTime
+        nonNullAddress
         limitMint(quantity)
     {
         require(
