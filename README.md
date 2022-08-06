@@ -8,13 +8,15 @@
 
 - [ ] Define cost of each NFTs at each stages (pre-sale, public sale)
 - [ ] Define repartition of the tokenemics (wallets redistribution, payment splitter)
-- [ ] Define if VRF function need to take in account the number of token hold by each holder (If I own 5 Monas, do I have more chance to be airdrop an random trait than a 1 Mona holder ?) 
-- [ ] Store informations efficiently about 2-3 layers potentially for each holder 
+- [x] Define if VRF function need to take in account the number of token hold by each holder (If I own 5 Monas, do I have more chance to be airdrop an random trait than a 1 Mona holder ?) 
+- [x] Store informations efficiently about 2-3 layers potentially for each holder => DNA on chain
 - [ ] Access efficiently to these stored datas
 - [ ] Smart contract have right to mint ? (multi sig wallet cannot be able to mint but it protect against Max mint smart contract attack)
-- [ ] Free mint for mona console holder 
-- [ ] Whitelist people
-- [ ] VRF function to choose randomly airdrop object
+- [x] Free mint for mona console holder 
+- [x] Public mint
+- [x] Whitelist people
+- [ ] VRF function to choose randomly DNA
+- [ ] VRF for Dynamic DNA
 - [ ] Test 
 
 ## Overview
