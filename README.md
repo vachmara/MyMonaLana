@@ -10,12 +10,12 @@
 - [ ] Define repartition of the tokenemics (wallets redistribution, payment splitter)
 - [x] Define if VRF function need to take in account the number of token hold by each holder (If I own 5 Monas, do I have more chance to be airdrop an random trait than a 1 Mona holder ?) 
 - [x] Store informations efficiently about 2-3 layers potentially for each holder => DNA on chain
-- [ ] Access efficiently to these stored datas
+- [x] Access efficiently to these stored datas
 - [ ] Smart contract have right to mint ? (multi sig wallet cannot be able to mint but it protect against Max mint smart contract attack)
 - [x] Free mint for mona console holder 
 - [x] Public mint
 - [x] Whitelist people
-- [ ] VRF function to choose randomly DNA
+- [x] VRF function to choose randomly DNA - TO DO need to randomize 5 packed DNA 
 - [ ] VRF for Dynamic DNA
 - [ ] Test 
 
