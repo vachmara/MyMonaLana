@@ -6,6 +6,7 @@ require("hardhat-docgen");
 require("hardhat-tracer");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
+require("hardhat-gas-reporter");
 require("dotenv").config({
   path: "C:/Users/Valentin/Desktop/Projet/sparkso-token/.env",
 });
