@@ -1,0 +1,2 @@
+// Check if (ERC165Checker.supportsInterface(extension, type(ICreatorExtensionTokenURI).interfaceId)) return true
+// Chainlink part is all checkout in real testing on Goerli (0x00fCEa62E52D21d2870E6B5B1148A075ff4DDAFD)
