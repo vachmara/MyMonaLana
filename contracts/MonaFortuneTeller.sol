@@ -3,6 +3,7 @@
 pragma solidity ^0.8.11;
 
 import "@manifoldxyz/libraries-solidity/contracts/access/AdminControl.sol";
+import "@manifoldxyz/creator-core-solidity/contracts/ERC1155CreatorImplementation.sol";
 import "@manifoldxyz/creator-core-solidity/contracts/extensions/ICreatorExtensionTokenURI.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol"; 
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
@@ -13,7 +14,9 @@ import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
  * @dev This is an extension contract to the actual Manifold Creator Contract Mona Console.
  */
 contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, KeeperCompatibleInterface{
-
+    /**
+     * @dev Core contract address
+     */
     address private _core;
 
     /**
@@ -52,9 +55,43 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     }
 
     /** -----------------------------------------
-     *  External interface
+     *  External functions
      *  -----------------------------------------
      */
+
+    /**
+     * @dev initialize _core value
+     * @param core address of the core contract
+     */
+    function initialize(address core) external adminRequired {
+        _core = core;
+    }
+
+
+    /**
+     * @dev mint a Mona Fortune Teller if you are holder of a mona console
+     * @param amount of mona console you owned
+     */
+    function mintMonaFortuneTeller(uint256 amount) external {
+        ERC1155CreatorImplementation MonaConsoleContract = ERC1155CreatorImplementation(_core);
+        require(
+           MonaConsoleContract.balanceOf(msg.sender, 1) == amount,
+            "MonaFortuneTeller - You not have enough Mona Console"
+        );
+        
+        address[] memory to = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
+        string[] memory uris = new string[](1);
+        uint256[] memory ids = new uint256[](1);
+        
+        to[0] = msg.sender;
+        amounts[0] = amount;
+        uris[0] = "";
+        ids[0] = 1;
+        
+       //MonaConsoleContract.burn(msg.sender, ids, amounts); keep the burning mona console ?????
+       MonaConsoleContract.mintExtensionNew(to, amounts, uris);
+    }
     
     /**
      * @dev view MonaFortuneTeller yesterday price value, today price value and last call timestamp. 
@@ -102,16 +139,16 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     
     
      /** -----------------------------------------
-     *  Public interface
+     *  Public functions
      *  -----------------------------------------
      */
     
     /**
-     * @dev initialize manifold extension
-     * @param core contract address
+     * @dev supportsInterface function
+     * @param interfaceId is id of the interface
      */
-    function initialize(address core) public adminRequired {
-      _core = core;
+    function supportsInterface(bytes4 interfaceId) public view virtual override(AdminControl, IERC165) returns (bool) {
+        return interfaceId == type(ICreatorExtensionTokenURI).interfaceId || AdminControl.supportsInterface(interfaceId) || super.supportsInterface(interfaceId);
     }
 
     /**
@@ -119,12 +156,13 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
      * @param creator check the core contract
      */
     function tokenURI(address creator, uint256 tokenId) public override view returns (string memory){
+        require(creator == _core, "Invalid token");
         string memory URI = _MonaFortuneTeller.yesterdayPrice >= _MonaFortuneTeller.todayPrice ? _downUri : _upUri;
         return URI;
     }
 
     /** -----------------------------------------
-     *  Internal interface
+     *  Internal functions
      *  -----------------------------------------
      */
 
