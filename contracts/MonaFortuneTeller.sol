@@ -20,16 +20,21 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     address private _core;
 
     /**
+     * @dev Token ID of the Mona Fortune Teller
+     */
+    uint256 private _tokenId;
+    
+    /**
      * @dev Store the ETH / USD price feed contract address
      */
     AggregatorV3Interface internal priceFeed;
     
     /**
-     * @dev Store yesterday price and actual price of ETH / USD with the last timestamp update
+     * @dev Store last price and actual price of ETH / USD with the last timestamp update
      */
     struct ETHUSD {
         uint256 lastTimestamp;
-        int256 yesterdayPrice; 
+        int256 lastPrice; 
         int256 todayPrice;
     }
 
@@ -39,15 +44,15 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     ETHUSD private _MonaFortuneTeller;
 
     /**
-     * @dev Chainlink keeper interval to execute functions (every day execution) 
+     * @dev Chainlink keeper interval to execute functions (every 2 weeks execution) 
      */
-    uint256 immutable public INTERVAL = 24 * 3600; 
+    uint256 immutable public INTERVAL = 24 * 3600 * 7 * 2; 
 
     /**
       * @dev Dynamics URI for Mona Fortune Teller
       */
-    string private _downUri = "hash eth down";
-    string private _upUri = "hash eth up";
+    string private _downUri = "https://mymonalana.infura-ipfs.io/ipfs/Qmd75ftAQRHbuXfZR84sMXoW9tiBK3A4HYHUxtHDgqPNn2";
+    string private _upUri = "https://mymonalana.infura-ipfs.io/ipfs/QmPRa2dq2uKQFP6LLxHYAfwwvKKzJ1JyTtXvfFr854Zunh";
 
 
     constructor(address priceFeedAddress_) ICreatorExtensionTokenURI() {
@@ -65,8 +70,29 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
      */
     function initialize(address core) external adminRequired {
         _core = core;
+        ERC1155CreatorImplementation MonaConsoleContract = ERC1155CreatorImplementation(_core);
+        address[] memory to = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
+        string[] memory uris = new string[](1);
+
+        uint256[] memory tokenIds = new uint256[](1);
+
+        to[0] = msg.sender;
+        amounts[0] = 0;
+        uris[0] = "";
+        tokenIds = MonaConsoleContract.mintExtensionNew(to, amounts, uris);
+        _tokenId = tokenIds[0];
     }
 
+    /**
+     * @dev Set new uris for Green and Red fortune teller
+     * @param downURI is the new IFPS metadatas for Red Fortune Teller
+     * @param upURI is the new IPFS metadatas for Green Fortune Teller
+     */
+    function setURI(string memory downURI, string memory upURI) external adminRequired {
+        _downUri = downURI;
+        _upUri = upURI;
+    }
 
     /**
      * @dev mint a Mona Fortune Teller if you are holder of a mona console
@@ -75,26 +101,29 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     function mintMonaFortuneTeller(uint256 amount) external {
         ERC1155CreatorImplementation MonaConsoleContract = ERC1155CreatorImplementation(_core);
         require(
-           MonaConsoleContract.balanceOf(msg.sender, 1) == amount,
+           MonaConsoleContract.balanceOf(msg.sender, 1) >= amount,
             "MonaFortuneTeller - You not have enough Mona Console"
         );
         
         address[] memory to = new address[](1);
         uint256[] memory amounts = new uint256[](1);
+        uint256[] memory tokenIds = new uint256[](1);
         string[] memory uris = new string[](1);
-        uint256[] memory ids = new uint256[](1);
+        
         
         to[0] = msg.sender;
         amounts[0] = amount;
+        tokenIds[0] = _tokenId;
         uris[0] = "";
+
+        uint256[] memory ids = new uint256[](1);
         ids[0] = 1;
-        
-       //MonaConsoleContract.burn(msg.sender, ids, amounts); keep the burning mona console ?????
-       MonaConsoleContract.mintExtensionNew(to, amounts, uris);
+        MonaConsoleContract.burn(msg.sender, ids, amounts);
+        MonaConsoleContract.mintExtensionExisting(to, tokenIds, amounts);
     }
     
     /**
-     * @dev view MonaFortuneTeller yesterday price value, today price value and last call timestamp. 
+     * @dev view MonaFortuneTeller last price value, today price value and last call timestamp. 
      */
     function monaFortuneTeller() view external returns (ETHUSD memory) {
         return _MonaFortuneTeller;
@@ -114,29 +143,11 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
     function performUpkeep(bytes calldata /* performData */) external override {
         // Recheck UpKeep
         if ((block.timestamp - _MonaFortuneTeller.lastTimestamp) > INTERVAL ) {
-            _MonaFortuneTeller.yesterdayPrice = _MonaFortuneTeller.todayPrice != int256(0) ? _MonaFortuneTeller.todayPrice : int256(0);
+            _MonaFortuneTeller.lastPrice = _MonaFortuneTeller.todayPrice != int256(0) ? _MonaFortuneTeller.todayPrice : int256(0);
             (_MonaFortuneTeller.todayPrice, _MonaFortuneTeller.lastTimestamp) = _priceFeed();
         }
     }
 
-    /**
-      * @dev Set URIs to Mona Fortune Teller
-      * @param upUri_ is the link of metadata when Mona Fortune Teller is green
-      * @param downUri_ is the link of metadata when Mona Fortune Teller is red
-      */
-    function setURIs(string memory upUri_, string memory downUri_) external {
-        require(
-            bytes(upUri_).length != 0,
-            "MonaFortuneTellerExtension - upUri must be different than null"
-        );
-        require(
-            bytes(downUri_).length != 0,
-            "MonaFortuneTellerExtension - downUri must be different than null"
-        );
-        _upUri = upUri_;
-        _downUri = downUri_; 
-    }  
-    
     
      /** -----------------------------------------
      *  Public functions
@@ -155,9 +166,9 @@ contract MonaFortuneTellerExtension is AdminControl, ICreatorExtensionTokenURI, 
      * @dev override current Mona Console tokenUri to implement dynamic URI
      * @param creator check the core contract
      */
-    function tokenURI(address creator, uint256 tokenId) public override view returns (string memory){
+    function tokenURI(address creator, uint256) public override view returns (string memory){
         require(creator == _core, "Invalid token");
-        string memory URI = _MonaFortuneTeller.yesterdayPrice >= _MonaFortuneTeller.todayPrice ? _downUri : _upUri;
+        string memory URI = _MonaFortuneTeller.lastPrice >= _MonaFortuneTeller.todayPrice ? _downUri : _upUri;
         return URI;
     }
 

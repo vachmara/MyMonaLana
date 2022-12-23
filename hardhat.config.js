@@ -81,7 +81,7 @@ function mainnetNetworkConfig() {
 
   return {
     url: url,
-    accounts: [accountPrivateKey],
+    accounts: { mnemonic: accountPrivateKey },
   };
 }
 
@@ -99,7 +99,7 @@ function goerliNetworkConfig() {
 
   return {
     url: url,
-    accounts: [accountPrivateKey],
+    accounts: { mnemonic: accountPrivateKey },
   };
 }
 

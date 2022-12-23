@@ -1,6 +1,6 @@
 const hre = require("hardhat");
 
-const ContractAddress = "0x5d2A4C669b9866Bd972C31a64d083489cd3dB480"
+const ContractAddress = "0x1DEde65FAf4BE8cFd8228215c6AE28d319886335"
 const NewAdmin = "0xdec44382EAed2954e170BD2a36381A9B06627332"
  
  async function main() {

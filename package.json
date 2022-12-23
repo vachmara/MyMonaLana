@@ -10,7 +10,7 @@
     "compile": "npx hardhat compile",
     "flatten": "npx hardhat flatten",
     "check:format": "solhint contracts/*.sol --fix",
-    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
+    "deploy:mainnet": "npx hardhat run scripts/deployMonaTeller.js --network mainnet",
     "deploy:goerli": "npx hardhat run scripts/deployMonaTeller.js --network goerli",
     "deploy:polygon:mainnet": "npx hardhat run scripts/deploy.js --network polygonMainnet",
     "deploy:polygon:mumbai": "npx hardhat run scripts/deploy-test.js --network polygonMumbai",

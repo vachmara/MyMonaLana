@@ -5,7 +5,7 @@ const hre = require("hardhat");
  * Goerli Address : 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
  * Mainnet Address : 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
  */
- const PriceFeedAddr = "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e"
+ const PriceFeedAddr = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
  
  async function main() {
  

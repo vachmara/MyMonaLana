@@ -2,7 +2,7 @@
     "name": "Red de Mona Fortune Teller",
     "created_by": "Mona Lana",
     "external_url": "http://www.monalana.xyz/airdrop/",
-    "description": "Use this console to redeem a My*MonaLana.\n\n\nMore info here: http://www.monalana.xyz/airdrop/",
+    "description": "The Mona Fortune Teller is a dynamic NFT that changes each day.\n\nIt appears\n\nGreen when variation in price of ETH is positive from the previous day.\nRed when variation in price of ETH is negative from the previous day.\n\nUnlocks a Physical merch and may unlock other surprises.",
     "attributes": [
         {
             "trait_type": "Artist",
@@ -17,13 +17,6 @@
             "value": "Red"
         }
     ],
-    "image_details": {
-        "bytes": 1703756,
-        "format": "PNG",
-        "sha256": "998995edcfea90baab56d2ce461e841ab2563cea31f7688feca9b1927073debb",
-        "width": 2500,
-        "height": 2500
-    },
-    "image": "https://arweave.net/Qon3sImRMxRVBUHo0Q3WwhPeLeYS6oYDaNIHEAnzHaY",
-    "image_url": "https://arweave.net/Qon3sImRMxRVBUHo0Q3WwhPeLeYS6oYDaNIHEAnzHaY"
+    "image": "https://mymonalana.infura-ipfs.io/ipfs/Qmd79qynEJNp9eNqQTKeEb3FEPU5WgLymDt6Hgxsn7d2kx",
+    "image_url": "https://mymonalana.infura-ipfs.io/ipfs/Qmd79qynEJNp9eNqQTKeEb3FEPU5WgLymDt6Hgxsn7d2kx"
 }
